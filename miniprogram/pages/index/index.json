@@ -1,0 +1,6 @@
+{
+    "usingComponents": {
+      "grid-tile-img": "/components/grid-tile-img/index"
+    },
+    "componentFramework": "glass-easel" 
+  }

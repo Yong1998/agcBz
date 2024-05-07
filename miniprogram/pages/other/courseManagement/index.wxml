@@ -1,0 +1,120 @@
+<navigation-bar title="课程消息编辑" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view 
+  scroll-y
+  style="width: 100%; height: 100%;"
+  show-scrollbar="{{false}}"
+  type="custom"
+  bind:scrolltolower="onScrollEnd">
+  <sticky-section push-pinned-header="{{false}}">
+    <sticky-header>
+      <picker mode="selector" range="{{days}}" value="{{dayIndex}}" bind:change="onPickerChange">
+        <view class="header picker">
+          {{day}}
+        </view>
+      </picker>
+    </sticky-header>
+    <list-view>
+      <view class="main">
+        <view class="item" wx:for="{{list}}">
+          <image class="avatar" />
+          <block wx:if="{{!item.noClass}}">
+            <view class="info">
+              <view class="time">{{item.classTime}}  {{item.teacher}}{{item.isEdited?'(代课)':''}}</view>
+              <view class="danceType">{{item.danceType}}</view>
+              <view class="classType">{{item.classType}}</view>
+            </view>
+            <view class="edit" bind:tap="edit" data-index="{{index}}" data-type="edit">代课</view>
+            <view class="cancel" bind:tap="cancelClass" data-index="{{index}}">取消授课</view>
+          </block>
+          <block wx:else>
+            <view class="info">
+              <view class="time">{{item.classTime}} 暂无授课</view>
+              <view class="danceType">无</view>
+              <view class="classType">{{item.classType}}</view>
+            </view>
+            <view class="add" bind:tap="edit" data-type="add" data-index="{{index}}">添加</view>
+          </block>
+        </view>
+      </view>
+    </list-view>
+  </sticky-section>
+</scroll-view>
+
+<view class="edit popup {{isEditShow?'show':''}}" >
+  <view class="mask" hidden="{{!isEditShow}}" bind:tap="onPopupMaskClick"></view>
+  <view class="form" catch:tap="onFormCatch">
+    <view class="item" style="{{editForm.classTime.list.length?'z-index:1;':''}}">
+      <view class="label">时间: </view>
+      <view class="inp">
+        <input value="{{editForm.classTime.value}}" disabled type="text" bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="classTime" />
+        <scroll-view scroll-y class="select-box" type="list" wx:if="{{editForm.classTime.list.length}}">
+          <view
+            class="select-item {{index===editForm.classTime.selected?'selected':''}}" 
+            wx:for="{{editForm.classTime.list}}" 
+            hover-class="select-hover" 
+            bind:tap="onSelectClick" 
+            data-value="{{item}}" 
+            data-key="classTime" 
+            data-index="{{index}}">{{item}}</view>
+        </scroll-view>
+      </view>
+      <!-- <view class="text"></view> -->
+    </view>
+
+    <view class="item" style="{{editForm.teacher.list.length?'z-index:1;':''}}">
+      <view class="label">老师: </view>
+      <view class="inp">
+        <input value="{{editForm.teacher.value}}" bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="teacher" />
+        <scroll-view scroll-y class="select-box" type="list" wx:if="{{editForm.teacher.list.length}}">
+          <view 
+            class="select-item {{index===editForm.teacher.selected?'selected':''}}" 
+            wx:for="{{editForm.teacher.list}}" 
+            hover-class="select-hover" 
+            bind:tap="onSelectClick" 
+            data-value="{{item}}" 
+            data-key="teacher" 
+            data-index="{{index}}">{{item}}</view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view class="item" style="{{editForm.danceType.list.length?'z-index:1;':''}}">
+      <view class="label">舞蹈: </view>
+      <view class="inp">
+        <input value="{{editForm.danceType.value}}" bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="danceType" />
+        <scroll-view scroll-y class="select-box" type="list" wx:if="{{editForm.danceType.list.length}}">
+          <view 
+            class="select-item {{index===editForm.danceType.selected?'selected':''}}" 
+            wx:for="{{editForm.danceType.list}}" 
+            hover-class="select-hover" 
+            bind:tap="onSelectClick" 
+            data-value="{{item}}" 
+            data-key="danceType" 
+            data-index="{{index}}">{{item}}</view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view class="item" style="{{editForm.classType.list.length?'z-index:1;':''}}">
+      <view class="label">类型: </view>
+      <view class="inp">
+        <input value="{{editForm.classType.value}}" disabled bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="classType" />
+        <scroll-view scroll-y class="select-box" type="list" wx:if="{{editForm.classType.list.length}}">
+          <view 
+            class="select-item {{index===editForm.classType.selected?'selected':''}}" 
+            wx:for="{{editForm.classType.list}}" 
+            hover-class="select-hover" 
+            bind:tap="onSelectClick" 
+            data-value="{{item}}" 
+            data-key="classType" 
+            data-index="{{index}}">{{item}}</view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view class="btn-box">
+      <view class="btn cancel" bind:tap="onCancelClick">取 消</view>
+      <view class="btn confirm" bind:tap="onConfirmClick">确 定</view>
+    </view>
+  </view>
+</view>

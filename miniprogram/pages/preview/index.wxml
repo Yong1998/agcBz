@@ -1,0 +1,4 @@
+<view class="page">
+    <image class="bg" src="{{bg}}" mode="widthFix" />
+    <view class="content"></view>
+</view>
