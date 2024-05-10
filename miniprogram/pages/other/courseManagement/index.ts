@@ -56,11 +56,13 @@ Page({
     login().then(() => {
       getGlobalAttr('test-mangement').then(res => {
         const { list, config, modify } = res
-        console.log(`list ===>`, list)
-        console.log(`modify ===>`, modify)
-        const dayKey = DAY_KEYS[new Date().getDay()]
-        const day = DAYS[new Date().getDay()]
-        const dayIndex = new Date().getDay()
+        // 获取第二天的时间
+        const today = new Date()
+        const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000)
+
+        const dayKey = DAY_KEYS[tomorrow.getDay()]
+        const day = DAYS[tomorrow.getDay()]
+        const dayIndex = tomorrow.getDay()
         let curList = null
         if(modify && Object.keys(modify).length) {
           curList = modify[dayKey]
