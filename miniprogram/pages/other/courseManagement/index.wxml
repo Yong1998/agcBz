@@ -15,25 +15,16 @@
     </sticky-header>
     <list-view>
       <view class="main">
-        <view class="item" wx:for="{{list}}">
+        <view class="item {{item.isEdited?'edit-icon':''}} {{item.noClass?'cancel-icon':''}}" wx:for="{{list}}">
           <image class="avatar" />
-          <block wx:if="{{!item.noClass}}">
-            <view class="info">
-              <view class="time">{{item.classTime}}  {{item.teacher}}{{item.isEdited?'(代课)':''}}</view>
-              <view class="danceType">{{item.danceType}}</view>
-              <view class="classType">{{item.classType}}</view>
-            </view>
-            <view class="edit" bind:tap="edit" data-index="{{index}}" data-type="edit">代课</view>
-            <view class="cancel" bind:tap="cancelClass" data-index="{{index}}">取消授课</view>
-          </block>
-          <block wx:else>
-            <view class="info">
-              <view class="time">{{item.classTime}} 暂无授课</view>
-              <view class="danceType">无</view>
-              <view class="classType">{{item.classType}}</view>
-            </view>
-            <view class="add" bind:tap="edit" data-type="add" data-index="{{index}}">添加</view>
-          </block>
+          <view class="info">
+            <view class="time">{{item.classTime}}{{item.teacher}}</view>
+            <view class="danceType">{{item.danceType}}</view>
+            <view class="classType">{{item.classType}}</view>
+          </view>
+          <view class="edit" bind:tap="edit" data-index="{{index}}" data-type="edit">代课</view>
+          <view class="cancel" wx:if="{{!item.noClass}}" data-type="请假" bind:tap="cancelClass" data-index="{{index}}">请假</view>
+          <view class="cancel" wx:else bind:tap="cancelClass" data-type="取消请假" data-index="{{index}}">取消请假</view>
         </view>
       </view>
     </list-view>
@@ -64,7 +55,7 @@
     <view class="item" style="{{editForm.teacher.list.length?'z-index:1;':''}}">
       <view class="label">老师: </view>
       <view class="inp">
-        <input value="{{editForm.teacher.value}}" bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="teacher" />
+        <input value="{{editForm.teacher.value}}" disabled bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="teacher" />
         <scroll-view scroll-y class="select-box" type="list" wx:if="{{editForm.teacher.list.length}}">
           <view 
             class="select-item {{index===editForm.teacher.selected?'selected':''}}" 
@@ -73,6 +64,22 @@
             bind:tap="onSelectClick" 
             data-value="{{item}}" 
             data-key="teacher" 
+            data-index="{{index}}">{{item}}</view>
+        </scroll-view>
+      </view>
+    </view>
+    <view class="item" style="{{editForm.newTeacher.list.length?'z-index:1;':''}}">
+      <view class="label">代课: </view>
+      <view class="inp">
+        <input value="{{editForm.newTeacher.value}}" bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="newTeacher" />
+        <scroll-view scroll-y class="select-box" type="list" wx:if="{{editForm.newTeacher.list.length}}">
+          <view 
+            class="select-item {{index===editForm.newTeacher.selected?'selected':''}}" 
+            wx:for="{{editForm.newTeacher.list}}" 
+            hover-class="select-hover" 
+            bind:tap="onSelectClick" 
+            data-value="{{item}}" 
+            data-key="newTeacher" 
             data-index="{{index}}">{{item}}</view>
         </scroll-view>
       </view>

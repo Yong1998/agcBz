@@ -38,6 +38,11 @@ Page({
         list: [],
         selected: '',
       },
+      newTeacher: {
+        value: '',
+        list: [],
+        selected: '',
+      },
       classType: {
         value: '',
         list: [],
@@ -105,10 +110,12 @@ Page({
   edit(e: any) {
     const { index, type: editType } = e.currentTarget.dataset
     const item = this.data.list[index] as any
+    const oldItem = attrValue.list[this.data.dayKey][index]
     this.setData({
       [`editForm.classTime.value`]: item.classTime,
       [`editForm.danceType.value`]: item.danceType,
-      [`editForm.teacher.value`]: item.teacher,
+      [`editForm.teacher.value`]: oldItem.teacher,
+      // [`editForm.newTeacher.value`]: item.newTeacher,
       [`editForm.classType.value`]: item.classType,
       isEditShow: true,
       isEditIndex: index,
@@ -129,6 +136,7 @@ Page({
     let list = [] as any
     if(key === 'classTime') list = CLASS_TIME
     if(key === 'teacher') list = TEACHERS
+    if(key === 'newTeacher') list = TEACHERS.filter((item: any) => item !== editForm.teacher.value)
     if(key === 'danceType') list = DANCE_TYPE
     if(key === 'classType') list = CLASS_TYPE
     Object.keys(editForm).forEach(key => {
@@ -174,6 +182,7 @@ Page({
       let list = [] as any
       if(key === 'classTime') list = CLASS_TIME
       if(key === 'teacher') list = TEACHERS
+      if(key === 'newTeacher') list = TEACHERS.filter((item: any) => item !== this.data.editForm.teacher.value)
       if(key === 'danceType') list = DANCE_TYPE
       if(key === 'classType') list = CLASS_TYPE
       if(!value) {
@@ -213,20 +222,36 @@ Page({
       [`editForm.classTime.list`]: [],
       [`editForm.danceType.list`]: [],
       [`editForm.teacher.list`]: [],
+      [`editForm.newTeacher.list`]: [],
       [`editForm.classType.list`]: [],
     })
   },
 
   onConfirmClick() {
-    const {editForm, list, isEditIndex, editType} = this.data as any
-    const {} = attrValue
+    const {editForm, list, isEditIndex, editType, dayKey} = this.data as any
+    const { list: classList  } = attrValue
     const newItem = {} as any
+    const oldItem = classList[dayKey][isEditIndex]
     
     for(let key in editForm) {
+      // if(key === 'teacher') {
+      //   if(editType === 'edit' && oldItem.teacher !== editForm[key].value) {
+      //     newItem[key] =`${oldItem.teacher}/${editForm[key].value}(代课)`
+      //   } else {
+      //     newItem[key] = editForm[key].value
+      //   }
+      // } else {
+        
+      // }
       newItem[key] = editForm[key].value
     }
-    editType === 'edit' && (newItem.isEdited = true)
-    
+
+    if(editType === 'edit') {
+      newItem.isEdited = true
+      newItem.teacher = `${newItem.teacher}/${newItem.newTeacher}(代课)`
+      delete newItem.newTeacher
+    }
+
     const newList = deepClone(list)
     newList[isEditIndex] = newItem
 
@@ -246,6 +271,7 @@ Page({
         [`editForm.classTime.list`]: [],
         [`editForm.danceType.list`]: [],
         [`editForm.teacher.list`]: [],
+        [`editForm.newTeacher.list`]: [],
         [`editForm.classType.list`]: [],
       })
     })
@@ -256,39 +282,55 @@ Page({
       [`editForm.classTime.list`]: [],
       [`editForm.danceType.list`]: [],
       [`editForm.teacher.list`]: [],
+      [`editForm.newTeacher.list`]: [],
       [`editForm.classType.list`]: [],
     })
   },
 
 
   cancelClass(e:any) {
-    const { index } = e.currentTarget.dataset
+    const { index, type } = e.currentTarget.dataset
+    wx.showModal({
+      title: '提示',
+      content: `确定${type}吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          const { list } = this.data as any
+          const item = list[index] as any
+          const newItem = {
+            ...item,
+            classTime: item.classTime,
+            danceType: item.danceType,
+            teacher: item.teacher,
+            classType: item.classType,
+            noClass: type === '请假' ? true : false,
+          }
+          if(newItem.isEdited) {
+            newItem.teacher = newItem.teacher.split('/')[0]
+            newItem.isEdited = false
+          }
 
-    const { list } = this.data as any
-    const item = list[index] as any
-    const newItem = {
-      classTime: item.classTime,
-      danceType: '',
-      teacher: '',
-      classType: item.classType,
-      noClass: true,
-    }
-    
-    const newList = deepClone(list)
-    newList[index] = newItem
-
-    let newModify = {} as any
-    if(attrValue.modify && Object.keys(attrValue.modify).length) {
-      newModify = deepClone(attrValue.modify)
-    } else {
-      newModify = deepClone(attrValue.list)
-    }
-    newModify[this.data.dayKey] = newList
-    attrValue.modify = newModify
-    saveGlobalAttr({ attrValue: JSON.stringify(attrValue) }).then(() => {
-      this.setData({
-        list: newList,
-      })
+          type === '请假' && (newItem.teacher+='(请假)')
+          type === '取消请假' && (newItem.teacher = newItem.teacher.replace('(请假)', ''))
+          
+          const newList = deepClone(list)
+          newList[index] = newItem
+      
+          let newModify = {} as any
+          if(attrValue.modify && Object.keys(attrValue.modify).length) {
+            newModify = deepClone(attrValue.modify)
+          } else {
+            newModify = deepClone(attrValue.list)
+          }
+          newModify[this.data.dayKey] = newList
+          attrValue.modify = newModify
+          saveGlobalAttr({ attrValue: JSON.stringify(attrValue) }).then(() => {
+            this.setData({
+              list: newList,
+            })
+          })
+        }
+      }
     })
   },
 })

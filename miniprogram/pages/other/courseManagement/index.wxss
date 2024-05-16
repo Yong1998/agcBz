@@ -41,6 +41,28 @@
   box-sizing: border-box;
   border-radius: 18rpx;
 }
+.main>.item.edit-icon::after {
+  position: absolute;
+  content: '';
+  display: block;
+  width: 38rpx;
+  height: 38rpx;
+  background: url("https://img.bazhuay.com/1715680907001_262.png") no-repeat;
+  background-size: 100% 100%;
+  right: 16rpx;
+  top: 16rpx;
+}
+.main>.item.cancel-icon::after {
+  position: absolute;
+  content: '';
+  display: block;
+  width: 38rpx;
+  height: 38rpx;
+  background: url("https://img.bazhuay.com/1715687722013_507.png") no-repeat;
+  background-size: 100% 100%;
+  right: 16rpx;
+  top: 16rpx;
+}
 .avatar {
   width: 100rpx;
   height: 100rpx;
