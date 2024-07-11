@@ -9,5 +9,8 @@
     "miniprogram-api-typings": "^2.8.3-1"
   },
   "main": ".eslintrc.js",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "tdesign-miniprogram": "^1.4.5"
+  }
 }

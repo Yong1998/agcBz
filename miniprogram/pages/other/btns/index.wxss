@@ -1,0 +1,30 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  width: 100vw;
+  height: 100vh;
+  background: url("https://pic.bazhuay.com/092ca3b988254e838ba8fd05ad3f66dc.jpg") no-repeat;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+
+.page view {
+  width: 324rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  margin-top: 42rpx;
+  font-size: 34rpx;
+  background: linear-gradient(-135deg, #386cff 0%, #1b99ff 100%);
+  border-radius: 44rpx;
+  box-shadow: 4rpx 7rpx 21rpx -5rpx #7d9fff;
+  color: #FFF;
+}
+
+.page .logo {
+  width: 500rpx;
+  height: 500rpx;
+  border-radius: 50%;
+}

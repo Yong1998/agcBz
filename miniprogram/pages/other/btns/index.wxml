@@ -1,0 +1,5 @@
+<view class="page" bind:tap="onClick">
+  <image class="logo" src="https://pic.bazhuay.com/8cd6a60b0c1f41debbbc87fd667d041c.jpeg" />
+  <view mark:type="课表编辑">课表编辑</view>
+  <view mark:type="课表管理">发送课程编辑</view>
+</view>

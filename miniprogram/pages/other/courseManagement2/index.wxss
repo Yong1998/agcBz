@@ -29,6 +29,7 @@
 }
 .main {
   overflow: auto;
+  min-height: 500rpx;
 }
 
 .main>.item {
@@ -221,4 +222,23 @@
 .custom-panel {
   /* height: 120px; */
   color: var(--td-text-color-primary);
+}
+.scroll-box {
+  height: calc(100vh - 88rpx - 110rpx - env(safe-area-inset-bottom));
+}
+
+.save {
+  width: 40%;
+  height: 88rpx;
+  line-height: 88rpx;
+  margin: 18px auto 0;
+  background: #1281ff;
+  color: #fff;
+  font-size: 36rpx;
+  text-align: center;
+  border-radius: 8rpx;
+}
+.save.disabled {
+  background: #f6f6f6;
+  color: #999;
 }

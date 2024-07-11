@@ -36,10 +36,10 @@ export const getImgList = (params= {
 
 export const login = async () => {
   const res = await wx.login();
-  const data = {
+  const data:any = {
     code: res.code,
     wxAppId: CONFIG.appId,
-    channelId: 'MiniProgram',
+    channelId: 'testMiniProgram',
     fromChannel: '',
     fromOrderNum: '',
     // sourceUserId: '',
@@ -62,8 +62,8 @@ export const getGlobalAttr = async (key: string) => {
 export const saveGlobalAttr = async (data: Record<string, any>) => {
   // 先登录管理后台后保存
   const loginParams = {
-    account: 'zhongweiyong',
-    md5Password: md5('OefjfQ54NS'),
+    account: 'admin',
+    md5Password: md5('hy202204'),
   }
   await postAdmin('/mbuy-admin/hbadmin/login', loginParams)
   const params = {
@@ -71,7 +71,7 @@ export const saveGlobalAttr = async (data: Record<string, any>) => {
     attrDesc: '1',
     attrName: 'test-mangement',
     attrType: 2,
-    id: 1182,
+    id: 52,
     attrValue: '',
     ...data,
   }

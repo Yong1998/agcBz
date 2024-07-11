@@ -1,0 +1,13 @@
+module.exports = {
+  useBadge: function (modifiedKeys, key) {
+    var badgeCon = {
+      dot: true,
+      offset: ['4px', '4px']
+    }
+    if(modifiedKeys.indexOf(key) !== -1) {
+      return badgeCon
+    } else {
+      return {}
+    }
+  }
+}

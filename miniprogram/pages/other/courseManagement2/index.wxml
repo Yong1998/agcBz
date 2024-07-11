@@ -1,3 +1,4 @@
+<wxs src="./index.wxs" module="t" />
 <!-- <scroll-view 
   scroll-y
   style="width: 100%; height: 100%;"
@@ -31,30 +32,32 @@
   </sticky-section> -->
 <!-- </scroll-view> -->
 
-
 <t-tabs
   sticky
   value="{{dayIndex}}"
   bind:change="onTabsChange"
   bind:click="onTabsClick"
   t-class-content="custom-panel">
-  <t-tab-panel wx:for="{{dayKeys}}" wx:for-index="i" wx:for-item="key" label="{{days[i]}}" value="{{i}}">
-    <view class="main">
-      <view class="item {{item.isEdited?'edit-icon':''}} {{item.noClass?'cancel-icon':''}}" wx:for="{{list}}">
-        <image class="avatar" src="https://pic.bazhuay.com/1afe0868f2c748c2b169dbfaa2a8b66a.webp" />
-        <view class="info">
-          <view class="time">{{item.classTime}}  {{item.teacher}}</view>
-          <view class="danceType">{{item.danceType}}</view>
-          <view class="classType">{{item.classType}}</view>
+  <t-tab-panel wx:for="{{dayKeys}}" wx:for-index="i" wx:for-item="key" label="{{days[i]}}" value="{{i}}" badge-props="{{t.useBadge(modifiedKeys, key)}}">
+    <scroll-view scroll-y class="scroll-box" style="--scrollH:{{contentH}}px;" scroll-top="{{scrollTop}}">
+      <view class="main">
+        <view class="item {{item.isEdited?'edit-icon':''}} {{item.noClass?'cancel-icon':''}}" wx:for="{{list}}">
+          <image class="avatar" src="https://pic.bazhuay.com/1afe0868f2c748c2b169dbfaa2a8b66a.webp" />
+          <view class="info">
+            <view class="time">{{item.classTime}}  {{item.teacher}}</view>
+            <view class="danceType">{{item.danceType}}</view>
+            <view class="classType">{{item.classType}}</view>
+          </view>
+          <view class="edit" bind:tap="edit" data-index="{{index}}" data-type="edit">编辑</view>
+          <!-- <view class="cancel" wx:if="{{!item.noClass}}" data-type="请假" bind:tap="cancelClass" data-index="{{index}}">请假</view> -->
+          <!-- <view class="cancel" wx:else bind:tap="cancelClass" data-type="取消请假" data-index="{{index}}">取消请假</view> -->
         </view>
-        <view class="edit" bind:tap="edit" data-index="{{index}}" data-type="edit">代课</view>
-        <view class="cancel" wx:if="{{!item.noClass}}" data-type="请假" bind:tap="cancelClass" data-index="{{index}}">请假</view>
-        <view class="cancel" wx:else bind:tap="cancelClass" data-type="取消请假" data-index="{{index}}">取消请假</view>
       </view>
-    </view>
+    </scroll-view>
   </t-tab-panel>
 </t-tabs>
-<view class="safe"></view>
+<view class="save {{saveBtnBan?'disabled':''}}" bind:tap="save">保 存</view>
+<!-- <view class="safe"></view> -->
 
 <!-- <view class="edit popup {{isEditShow?'show':''}}" >
   <view class="mask" hidden="{{!isEditShow}}" bind:tap="onPopupMaskClick"></view>
@@ -173,7 +176,7 @@
     <view class="item" style="{{editForm.teacher.list.length?'z-index:1;':''}}">
       <view class="label">老师: </view>
       <view class="inp">
-        <input value="{{editForm.teacher.value}}" disabled bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="teacher" />
+        <input value="{{editForm.teacher.value}}" bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="teacher" />
         <scroll-view scroll-y class="select-box" type="list" wx:if="{{editForm.teacher.list.length}}">
           <view 
             class="select-item {{index===editForm.teacher.selected?'selected':''}}" 
@@ -186,7 +189,7 @@
         </scroll-view>
       </view>
     </view>
-    <view class="item" style="{{editForm.newTeacher.list.length?'z-index:1;':''}}">
+    <!-- <view class="item" style="{{editForm.newTeacher.list.length?'z-index:1;':''}}">
       <view class="label">代课: </view>
       <view class="inp">
         <input value="{{editForm.newTeacher.value}}" bind:focus="onInputFocus" bind:blur="onInputBlur" bind:change="onInputChange" bind:input="onInput" data-key="newTeacher" />
@@ -201,7 +204,7 @@
             data-index="{{index}}">{{item}}</view>
         </scroll-view>
       </view>
-    </view>
+    </view> -->
 
     <view class="item" style="{{editForm.danceType.list.length?'z-index:1;':''}}">
       <view class="label">舞蹈: </view>

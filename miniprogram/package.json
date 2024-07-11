@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "md5": "^2.3.0",
-    "tdesign-miniprogram": "1.0.2"
+    "tdesign-miniprogram": "^1.4.5"
   },
   "devDependencies": {
     "@types/md5": "^2.3.5"

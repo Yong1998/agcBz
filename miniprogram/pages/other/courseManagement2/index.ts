@@ -16,12 +16,15 @@ Page({
    * 页面的初始数据
    */
   data: {
+    contentH: wx.getSystemInfoSync().windowHeight - 55 - 100,
+
     list: [], // 渲染课程列表
     days: DAYS, // 周几
     day: '周一', // 
-    dayKey: 'mon', // 'mon', 'tue', 'wed', 'tur', 'fri', 'sat', 'sun
+    dayKey: 'mon', // 'mon', 'tue', 'wed', 'tur', 'fri', 'sat', 'sun'
     dayKeys: DAY_KEYS,
     dayIndex: 0, // 默认周一
+    modifiedKeys: [] as any, // 修改后的星期列表
     editForm: {
       classTime: {
         value: '',
@@ -39,11 +42,11 @@ Page({
         list: [],
         selected: '',
       },
-      newTeacher: {
-        value: '',
-        list: [],
-        selected: '',
-      },
+      // newTeacher: {
+      //   value: '',
+      //   list: [],
+      //   selected: '',
+      // },
       classType: {
         value: '',
         list: [],
@@ -53,8 +56,9 @@ Page({
     isEditShow: false,
     isEditIndex: '',
     editType: '',
-
     config: {},
+    saveBtnBan: true,
+    scrollTop: 0
   },
 
   /**
@@ -65,18 +69,15 @@ Page({
       getGlobalAttr('test-mangement').then(res => {
         const { list, config, modify } = res
         // 获取第二天的时间
-        const today = new Date()
-        const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        // const today = new Date()
+        // const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000)
 
-        const dayKey = DAY_KEYS[tomorrow.getDay()]
-        const day = DAYS[tomorrow.getDay()]
-        const dayIndex = tomorrow.getDay()
-        let curList = null
-        if(modify && Object.keys(modify).length) {
-          curList = modify[dayKey]
-        } else {
-          curList = list[dayKey]
-        }
+        // const dayKey = DAY_KEYS[tomorrow.getDay()]
+        const dayKey = DAY_KEYS[0]
+        // const day = DAYS[tomorrow.getDay()]
+        const day = DAYS[0]
+        const dayIndex = 0
+        let curList = list[dayKey]
         this.setData({
           list: curList,
           dayKey,
@@ -98,11 +99,7 @@ Page({
     const day = DAYS[index]
     const dayKey = DAY_KEYS[index]
     let curList = null
-    if(attrValue.modify && Object.keys(attrValue.modify).length) {
-      curList = attrValue.modify[dayKey]
-    } else {
-      curList = attrValue.list[dayKey]
-    }
+    curList = attrValue.list[dayKey]
     this.setData({
       list: curList,
       day,
@@ -115,12 +112,11 @@ Page({
     const { index, type: editType } = e.currentTarget.dataset
     const item = this.data.list[index] as any
     const oldItem = attrValue.list[this.data.dayKey][index]
-    const newTeacherValue = item.teacher.split('/')[1]?.split('(')[0]?.replace(' ', '') || ''
     this.setData({
       [`editForm.classTime.value`]: item.classTime,
       [`editForm.danceType.value`]: item.danceType,
       [`editForm.teacher.value`]: oldItem.teacher,
-      [`editForm.newTeacher.value`]: newTeacherValue,
+      // [`editForm.newTeacher.value`]: item.newTeacher,
       [`editForm.classType.value`]: item.classType,
       isEditShow: true,
       isEditIndex: index,
@@ -141,7 +137,7 @@ Page({
     let list = [] as any
     if(key === 'classTime') list = CLASS_TIME
     if(key === 'teacher') list = TEACHERS
-    if(key === 'newTeacher') list = TEACHERS.filter((item: any) => item !== editForm.teacher.value)
+    // if(key === 'newTeacher') list = TEACHERS.filter((item: any) => item !== editForm.teacher.value)
     if(key === 'danceType') list = DANCE_TYPE
     if(key === 'classType') list = CLASS_TYPE
     Object.keys(editForm).forEach(key => {
@@ -187,13 +183,12 @@ Page({
       let list = [] as any
       if(key === 'classTime') list = CLASS_TIME
       if(key === 'teacher') list = TEACHERS
-      if(key === 'newTeacher') list = TEACHERS.filter((item: any) => item !== this.data.editForm.teacher.value)
+      // if(key === 'newTeacher') list = TEACHERS.filter((item: any) => item !== this.data.editForm.teacher.value)
       if(key === 'danceType') list = DANCE_TYPE
       if(key === 'classType') list = CLASS_TYPE
       if(!value) {
         this.setData({
           [`editForm.${key}.list`]: list,
-          [`editForm.${key}.value`]: '',
         })
       } else {
         const reg = new RegExp(value, 'i')
@@ -206,7 +201,6 @@ Page({
   },
   onSelectClick(e:any) {
     const { key, value, index } = e.currentTarget.dataset
-    console.log(`value ===>`, value)
     this.setData({
       [`editForm.${key}.list`]: [],
     })
@@ -219,7 +213,6 @@ Page({
         console.log(`this.data.editForm  ===>`, this.data.editForm)
       })
     }, 100);
-   
   },
 
   onCancelClick() {
@@ -228,7 +221,7 @@ Page({
       [`editForm.classTime.list`]: [],
       [`editForm.danceType.list`]: [],
       [`editForm.teacher.list`]: [],
-      [`editForm.newTeacher.list`]: [],
+      // [`editForm.newTeacher.list`]: [],
       [`editForm.classType.list`]: [],
     })
   },
@@ -238,17 +231,28 @@ Page({
     // const { list: classList  } = attrValue
     const newItem = {} as any
     // const oldItem = classList[dayKey][isEditIndex]
+    const modifiedKeys = this.data.modifiedKeys
     
     for(let key in editForm) {
+      // if(key === 'teacher') {
+      //   if(editType === 'edit' && oldItem.teacher !== editForm[key].value) {
+      //     // newItem[key] =`${oldItem.teacher}/${editForm[key].value}(代课)`
+      //     newItem[key] = editForm[key].value
+      //   } else {
+      //     newItem[key] = editForm[key].value
+      //   }
+      // } else {
+        
+      // }
       newItem[key] = editForm[key].value
     }
 
     if(editType === 'edit') {
-      let teacher = newItem.teacher
-      newItem.newTeacher && (teacher+=` / ${newItem.newTeacher}(代课)`)
-      newItem.isEdited = newItem.newTeacher
-      newItem.teacher = teacher
-      delete newItem.newTeacher
+      newItem.isEdited = true
+      // newItem.teacher = `${newItem.teacher} / ${newItem.newTeacher}(代课)`
+      // newItem.teacher = `${newItem.newTeacher}`
+      // delete newItem.newTeacher
+      modifiedKeys.push(dayKey)
     }
 
     const newList = deepClone(list)
@@ -256,31 +260,29 @@ Page({
 
     // const newModify = deepClone(attrValue.list)
     let newModify = {} as any
-    if(attrValue.modify && Object.keys(attrValue.modify).length) {
-      newModify = deepClone(attrValue.modify)
-    } else {
-      newModify = deepClone(attrValue.list)
-    }
+    newModify = deepClone(attrValue.list)
     newModify[this.data.dayKey] = newList
-    attrValue.modify = newModify
-    saveGlobalAttr({ attrValue: JSON.stringify(attrValue) }).then(() => {
+    attrValue.list = newModify
+    // saveGlobalAttr({ attrValue: JSON.stringify(attrValue) }).then(() => {
       this.setData({
         list: newList,
         isEditShow: false,
+        modifiedKeys,
         [`editForm.classTime.list`]: [],
         [`editForm.danceType.list`]: [],
         [`editForm.teacher.list`]: [],
-        [`editForm.newTeacher.list`]: [],
+        // [`editForm.newTeacher.list`]: [],
         [`editForm.classType.list`]: [],
+        saveBtnBan: false,
       })
-    })
+    // })
   },
   onFormCatch() {
     this.setData({
       [`editForm.classTime.list`]: [],
       [`editForm.danceType.list`]: [],
       [`editForm.teacher.list`]: [],
-      [`editForm.newTeacher.list`]: [],
+      // [`editForm.newTeacher.list`]: [],
       [`editForm.classType.list`]: [],
     })
   },
@@ -314,13 +316,9 @@ Page({
           newList[index] = newItem
       
           let newModify = {} as any
-          if(attrValue.modify && Object.keys(attrValue.modify).length) {
-            newModify = deepClone(attrValue.modify)
-          } else {
-            newModify = deepClone(attrValue.list)
-          }
+          newModify = deepClone(attrValue.list)
           newModify[this.data.dayKey] = newList
-          attrValue.modify = newModify
+          attrValue.list = newModify
           saveGlobalAttr({ attrValue: JSON.stringify(attrValue) }).then(() => {
             this.setData({
               list: newList,
@@ -330,13 +328,10 @@ Page({
       }
     })
   },
-
-
   onTabsChange() {
     // 滚动到顶部
-    wx.pageScrollTo({
-      scrollTop: 0,
-      duration: 300
+    this.setData({
+      scrollTop: 0
     })
   },
   onTabsClick(event:any) {
@@ -344,11 +339,7 @@ Page({
     const day = DAYS[index]
     const dayKey = DAY_KEYS[index]
     let curList = null
-    if(attrValue.modify && Object.keys(attrValue.modify).length) {
-      curList = attrValue.modify[dayKey]
-    } else {
-      curList = attrValue.list[dayKey]
-    }
+    curList = attrValue.list[dayKey]
     this.setData({
       list: curList,
       day,
@@ -361,5 +352,34 @@ Page({
     this.setData({
       isEditShow: e.detail.visible,
     });
+  },
+
+  save() {
+    if(this.data.saveBtnBan) return
+    wx.showLoading({ title: '保存中' })
+    attrValue.modify = {}
+    for(let key in attrValue.list) {
+      const list = attrValue.list[key]
+      for(let item of list) {
+        delete item.isEdited
+      }
+    }
+    saveGlobalAttr({ attrValue: JSON.stringify(attrValue)}).then(() => {
+      wx.hideLoading()
+      wx.showModal({
+        title: '保存成功',
+        content: '修改完成，点击确定可继续修改',
+        showCancel: false,
+        success: (res) => {
+          if (res.confirm) {
+            wx.redirectTo({
+              url: '/pages/other/courseManagement2/index'
+            })
+          } else if (res.cancel) {
+            wx.navigateBack()
+          }
+        }
+      })
+    })
   },
 })

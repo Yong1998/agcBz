@@ -9,8 +9,8 @@ const HEADER = {
 
 export const CONFIG = {
   appId: miniProgram.appId,
-  baseUrl: 'https://www.yipintemian.com',
-  adminBaseUrl: 'https://mbuy-admin.yipintemian.com',
+  baseUrl: 'https://test2.yipintemian.com',
+  adminBaseUrl: 'https://test2-mbuy-admin.yipintemian.com',
 }
 
 export function get(url:string, data: object) {

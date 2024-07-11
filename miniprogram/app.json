@@ -1,6 +1,8 @@
 {
   "pages": [
+    "pages/other/btns/index",
     "pages/other/courseManagement/index",
+    "pages/other/courseManagement2/index",
     "pages/index/index",
     "pages/logs/logs",
     "pages/preview/index"
@@ -10,7 +12,7 @@
     "navigationStyle": "custom"
   },
   "style": "v2",
-  "renderer": "skyline",
+  "renderer": "webview",
   "rendererOptions": {
     "skyline": {
       "defaultDisplayBlock": true,
